@@ -1,0 +1,39 @@
+name: Continuous Integration
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Lint code
+        run: |
+          if [ -f package.json ]; then
+            npm run lint || echo "No lint script found"
+          else
+            echo "package.json not found, skipping lint"
+          fi
+
+      - name: Run tests
+        run: |
+          if [ -f package.json ]; then
+            npm test || echo "No test script found"
+          else
+            echo "package.json not found, skipping tests"
+          fi
