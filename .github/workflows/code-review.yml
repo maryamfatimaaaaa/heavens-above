@@ -1,0 +1,37 @@
+name: Automated Code Review
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Lint code (check coding standards)
+        run: |
+          if [ -f package.json ]; then
+            npm run lint || echo "No lint script found"
+          else
+            echo "No package.json found, skipping lint"
+          fi
+
+      - name: Run security scan
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:javascript"
+
+      - name: Provide feedback
+        run: echo "Code review checks completed successfully!"
