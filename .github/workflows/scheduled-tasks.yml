@@ -1,0 +1,30 @@
+name: Scheduled Maintenance Tasks
+
+on:
+  schedule:
+    # Runs every day at 12:00 PM UTC (you can adjust)
+    - cron: "0 12 * * *"
+  workflow_dispatch:
+
+jobs:
+  daily-tasks:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Log current date and time
+        run: echo "Running scheduled maintenance on $(date)"
+
+      - name: Simulate data backup
+        run: |
+          mkdir -p artifacts
+          echo "Backup completed at $(date)" > artifacts/backup-log.txt
+          cat artifacts/backup-log.txt
+
+      - name: Upload backup log
+        uses: actions/upload-artifact@v4
+        with:
+          name: daily-backup-log
+          path: artifacts/backup-log.txt
